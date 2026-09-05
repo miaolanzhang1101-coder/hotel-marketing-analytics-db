@@ -1,0 +1,13 @@
+id,name,region,country,summer_idx,winter_idx
+1,Los Angeles,CA,US,1.0,1.0
+2,San Francisco,CA,US,1.0,1.05
+3,San Diego,CA,US,0.95,1.0
+4,Phoenix,AZ,US,1.45,0.7
+5,Las Vegas,NV,US,1.2,0.85
+6,Sacramento,CA,US,1.05,1.0
+7,Seattle,WA,US,0.9,1.3
+8,Dallas,TX,US,1.1,0.95
+9,New York,NY,US,0.95,1.2
+10,Chicago,IL,US,0.95,1.25
+11,Vancouver,BC,CA,0.9,1.25
+12,London,ENG,GB,1.05,1.0

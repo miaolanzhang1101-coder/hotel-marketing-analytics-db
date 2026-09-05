@@ -1,0 +1,128 @@
+# Central configuration for data generation and seeding.
+# Secrets (DATABASE_URL, DB_SCHEMA) belong in .env, not here.
+
+random_seed: 42
+
+paths:
+  data_dir: data          # relative to project root; override with DATA_DIR env var
+  schema_file: sql/schema.sql
+
+window:
+  start: 2024-09-01
+  end: 2026-08-31
+  warmup_days: 75         # bookings generated before the window so edges are complete
+  lookahead_days: 45      # future arrivals already on the books
+
+property:
+  rooms: 74
+  base_arrivals_per_day: 21.0
+  base_adr: 232.0
+  yoy_demand_growth: 0.08
+  yoy_adr_growth: 0.05
+  cancel_rate: 0.115
+
+seasonality:
+  annual_amplitude: 0.38
+  annual_peak_doy: 197          # mid-July
+  secondary_amplitude: 0.07
+  secondary_offset_doy: 100
+  holiday_decay_days: 3
+  # arrival multipliers by weekday, Monday first
+  dow_arrival: [0.80, 0.75, 0.82, 0.98, 1.55, 1.45, 0.85]
+  holidays:
+    2024-09-02: 1.40
+    2024-11-28: 1.35
+    2024-12-24: 1.30
+    2024-12-31: 1.55
+    2025-02-14: 1.40
+    2025-05-26: 1.45
+    2025-07-04: 1.60
+    2025-09-01: 1.45
+    2025-11-27: 1.35
+    2025-12-24: 1.30
+    2025-12-31: 1.55
+    2026-02-14: 1.40
+    2026-05-25: 1.45
+    2026-07-03: 1.60
+
+behavior:
+  nights_geometric_p: 0.42
+  max_nights: 9
+  weekend_max_nights: 4
+  max_guests: 3
+  lead_time_summer_mean: 34
+  lead_time_other_mean: 22
+  lead_time_ota_factor: 0.62
+  lead_time_cap: 180
+  adr_stddev: 24
+  adr_min: 119
+  adr_max: 520
+  weekend_adr_factor: 1.12
+  attribution_rate: 0.62        # share of channel bookings credited to an active flight
+  lift_bookings: 1.28           # channel demand lift during a bookings-objective flight
+  lift_awareness: 1.16
+
+funnel:
+  baseline_site_sessions: 275   # non-converting daily traffic at share 1.0
+  session_noise_sd: 0.08
+  users_ratio_min: 0.78
+  users_ratio_max: 0.86
+
+media:
+  spend_noise_sd: 0.18
+  email_clicks_mean: 310
+  email_clicks_sd: 40
+  campaign_session_ratio_min: 0.82
+  campaign_session_ratio_max: 0.94
+
+# share_drift is the linear mix shift across the full window
+# (book-direct program: OTA declines, owned channels grow).
+channels:
+  - {id: 1, name: Direct / Organic, is_paid: false, is_website_channel: true,  conversion_rate: 0.024, base_share: 0.26, share_drift: 0.030, adr_factor: 1.03}
+  - {id: 2, name: Paid Search,      is_paid: true,  is_website_channel: true,  conversion_rate: 0.031, base_share: 0.14, cpc: 1.9,  ctr: 0.042}
+  - {id: 3, name: Paid Social,      is_paid: true,  is_website_channel: true,  conversion_rate: 0.008, base_share: 0.05, cpc: 0.55, ctr: 0.011}
+  - {id: 4, name: Email,            is_paid: false, is_website_channel: true,  conversion_rate: 0.047, base_share: 0.09, share_drift: 0.012, adr_factor: 0.99, cpc: 0.0, ctr: 0.24}
+  - {id: 5, name: Metasearch,       is_paid: true,  is_website_channel: true,  conversion_rate: 0.036, base_share: 0.07, share_drift: 0.008, cpc: 1.1, ctr: 0.055}
+  - {id: 6, name: OTA,              is_paid: false, is_website_channel: false, conversion_rate: null,  base_share: 0.33, share_drift: -0.050, adr_factor: 0.97}
+  - {id: 7, name: Referral / PR,    is_paid: false, is_website_channel: true,  conversion_rate: 0.018, base_share: 0.06, adr_factor: 1.02}
+
+markets:
+  - {id: 1,  name: Los Angeles,   region: CA,  country: US, weight: 0.29, summer_idx: 1.00, winter_idx: 1.00}
+  - {id: 2,  name: San Francisco, region: CA,  country: US, weight: 0.15, summer_idx: 1.00, winter_idx: 1.05}
+  - {id: 3,  name: San Diego,     region: CA,  country: US, weight: 0.08, summer_idx: 0.95, winter_idx: 1.00}
+  - {id: 4,  name: Phoenix,       region: AZ,  country: US, weight: 0.09, summer_idx: 1.45, winter_idx: 0.70}
+  - {id: 5,  name: Las Vegas,     region: NV,  country: US, weight: 0.06, summer_idx: 1.20, winter_idx: 0.85}
+  - {id: 6,  name: Sacramento,    region: CA,  country: US, weight: 0.06, summer_idx: 1.05, winter_idx: 1.00}
+  - {id: 7,  name: Seattle,       region: WA,  country: US, weight: 0.05, summer_idx: 0.90, winter_idx: 1.30}
+  - {id: 8,  name: Dallas,        region: TX,  country: US, weight: 0.05, summer_idx: 1.10, winter_idx: 0.95}
+  - {id: 9,  name: New York,      region: NY,  country: US, weight: 0.07, summer_idx: 0.95, winter_idx: 1.20}
+  - {id: 10, name: Chicago,       region: IL,  country: US, weight: 0.05, summer_idx: 0.95, winter_idx: 1.25}
+  - {id: 11, name: Vancouver,     region: BC,  country: CA, weight: 0.03, summer_idx: 0.90, winter_idx: 1.25}
+  - {id: 12, name: London,        region: ENG, country: GB, weight: 0.02, summer_idx: 1.05, winter_idx: 1.00}
+
+campaigns:
+  - {id: 1,  name: Fall Coastal Escape 2024,     channel: Paid Search, objective: bookings,  start: 2024-09-09, end: 2024-11-03, budget: 14000, market_boost: null}
+  - {id: 2,  name: Holiday Lights Package 2024,  channel: Paid Social, objective: awareness, start: 2024-11-15, end: 2024-12-28, budget: 9000,  market_boost: null}
+  - {id: 3,  name: Winter Direct Booking Push,   channel: Metasearch,  objective: bookings,  start: 2025-01-06, end: 2025-02-28, budget: 11000, market_boost: null}
+  - {id: 4,  name: Valentine's Getaway 2025,     channel: Email,       objective: bookings,  start: 2025-01-27, end: 2025-02-13, budget: 1200,  market_boost: null}
+  - {id: 5,  name: Spring Break CA Drive 2025,   channel: Paid Search, objective: bookings,  start: 2025-03-03, end: 2025-04-20, budget: 16000, market_boost: null}
+  - {id: 6,  name: Summer Peak Brand 2025,       channel: Paid Social, objective: awareness, start: 2025-05-12, end: 2025-08-17, budget: 22000, market_boost: null}
+  - {id: 7,  name: Phoenix Heat Escape 2025,     channel: Paid Search, objective: bookings,  start: 2025-05-26, end: 2025-08-10, budget: 13000, market_boost: {market_id: 4, factor: 2.6}}
+  - {id: 8,  name: Labor Day Flash Sale 2025,    channel: Email,       objective: bookings,  start: 2025-08-18, end: 2025-08-31, budget: 1500,  market_boost: null}
+  - {id: 9,  name: Fall Wine Country 2025,       channel: Paid Search, objective: bookings,  start: 2025-09-08, end: 2025-11-02, budget: 17000, market_boost: null}
+  - {id: 10, name: Holiday Lights Package 2025,  channel: Paid Social, objective: awareness, start: 2025-11-14, end: 2025-12-27, budget: 11000, market_boost: null}
+  - {id: 11, name: Jan Direct Booking Push 2026, channel: Metasearch,  objective: bookings,  start: 2026-01-05, end: 2026-02-27, budget: 12500, market_boost: null}
+  - {id: 12, name: Spring Break CA Drive 2026,   channel: Paid Search, objective: bookings,  start: 2026-03-02, end: 2026-04-19, budget: 18000, market_boost: null}
+  - {id: 13, name: Summer Peak Brand 2026,       channel: Paid Social, objective: awareness, start: 2026-05-11, end: 2026-08-16, budget: 25000, market_boost: null}
+  - {id: 14, name: Phoenix Heat Escape 2026,     channel: Paid Search, objective: bookings,  start: 2026-05-25, end: 2026-08-09, budget: 15000, market_boost: {market_id: 4, factor: 2.6}}
+
+# Seed load order; must respect foreign keys.
+load_order:
+  - {table: markets,                file: markets.csv}
+  - {table: channels,               file: channels.csv}
+  - {table: campaigns,              file: campaigns.csv}
+  - {table: bookings,               file: bookings.csv}
+  - {table: daily_property_metrics, file: daily_property_metrics.csv}
+  - {table: daily_channel_metrics,  file: daily_channel_metrics.csv}
+  - {table: daily_campaign_metrics, file: daily_campaign_metrics.csv}
+  - {table: daily_market_metrics,   file: daily_market_metrics.csv}

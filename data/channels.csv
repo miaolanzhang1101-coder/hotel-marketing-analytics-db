@@ -1,0 +1,8 @@
+id,name,is_paid,is_website_channel
+1,Direct / Organic,False,True
+2,Paid Search,True,True
+3,Paid Social,True,True
+4,Email,False,True
+5,Metasearch,True,True
+6,OTA,False,False
+7,Referral / PR,False,True
