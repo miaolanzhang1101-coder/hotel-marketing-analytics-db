@@ -1,78 +1,76 @@
-hotel-data-autumn
+# Hotel Data — Autumn
 
-Seeded hotel marketing analytics data and database setup for the Autumn dashboard.
+Seeded hotel marketing analytics data and database infrastructure for the Autumn dashboard.
 
+The dataset contains 730 days of realistic hotel marketing data, including bookings, campaigns, channels, markets, and property performance.
 
+## Project Structure
 
-The dataset covers 730 days of realistic marketing, booking, channel, campaign, market, and property performance data for an independent hotel.
+- `data/` — Seeded CSV datasets
+- `sql/` — PostgreSQL schema
+- `src/` — Data generation and seeding scripts
+- `tests/` — Data quality and database integrity tests
+- `config.yaml` — Project configuration
+- `requirements.txt` — Python dependencies
+- `Makefile` — Common development commands
 
-Project Structure
+## Setup
 
-data/       Seeded CSV data
-sql/        Database schema
-src/        Data generation and seeding scripts
-tests/      Data quality and database tests
+### 1. Clone the repository
 
+    git clone https://github.com/miaolanzhang1101-coder/hotel-marketing-analytics-db.git
+    cd hotel-marketing-analytics-db
 
-Setup
+### 2. Install dependencies
 
-1. Install dependencies
+    pip install -r requirements.txt
 
-pip install -r requirements.txt
+### 3. Configure the database
 
+Create a `.env` file in the project root and add your PostgreSQL connection string:
 
-2. Set your database
+    DATABASE_URL="your-database-connection-string"
 
-Create a .env file:
+Use a hosted PostgreSQL database such as Supabase or Neon.
 
-DATABASE_URL="your-database-connection-string"
+Do not commit `.env` to GitHub.
 
+### 4. Create the database schema
 
-3. Create the database schema
+    psql "$DATABASE_URL" -f sql/schema.sql
 
-psql "$DATABASE_URL" -f sql/schema.sql
+### 5. Seed the database
 
+    python -m src.seed
 
-4. Seed the data
+This loads the 730-day hotel marketing dataset into the database.
 
-python -m src.seed
+### 6. Run tests
 
+    pytest
 
-5. Run tests
+The test suite checks data quality and database integrity.
 
-pytest
+## Dataset
 
+| Dataset | Description |
+| --- | --- |
+| Bookings | Booking and revenue records |
+| Campaigns | Marketing campaign definitions |
+| Channels | Marketing channel information |
+| Daily Campaign Metrics | Daily campaign performance |
+| Daily Channel Metrics | Daily channel performance |
+| Daily Market Metrics | Feeder-market performance |
+| Daily Property Metrics | Hotel-level daily performance |
+| Markets | Geographic market definitions |
 
-Data
+## Requirements
 
-The database includes:
+- Python 3.10+
+- PostgreSQL
+- PostgreSQL `psql` command-line tools
+- Hosted PostgreSQL database
 
+## Security
 
-
-Bookings
-
-Campaigns
-
-Marketing channels
-
-Daily campaign metrics
-
-Daily channel metrics
-
-Daily market metrics
-
-Daily property metrics
-
-Feeder markets
-
-
-
-The data is designed to support the Autumn hotel marketing dashboard and its performance and detail views.
-
-Requirements
-
-Python 3.10+
-
-PostgreSQL
-
-A hosted PostgreSQL database such as Supabase or NeonO
+Never commit database credentials or connection strings. Use `.env` for local configuration and `.env.example` as the template.
